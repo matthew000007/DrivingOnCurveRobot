@@ -18,6 +18,7 @@
 #define state_forward 0
 #define turn_right 1
 #define turn_left 2
+#define stop 3
 
 CurveRobot test_1(6, 5, 7, 8);
 CurveRobot test_2(6, 5, 7, 8, 150);
@@ -80,6 +81,9 @@ void loop() {
         case turn_left:
             test_1.steerLeft();
             break;
+        case stop:
+            test_1.stopDriving();
+            break;
     }
 
     switch (test_1.getTargetState(1)) {
@@ -91,6 +95,9 @@ void loop() {
             break;
         case turn_left:
             test_2.steerLeft();
+            break;
+        case stop:
+            test_2.stopDriving();
             break;
     }
 }
