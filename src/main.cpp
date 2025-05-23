@@ -20,8 +20,7 @@
 #define turn_left 2
 #define stop 3
 
-CurveRobot test_1(6, 5, 7, 8);
-CurveRobot test_2(6, 5, 7, 8, 150);
+CurveRobot robot(5, 6, 4, 7, 235, 0.0, 0, 250, 2, 3);
 
 /*void runForward() {
     // Говорим, что едем вперед
@@ -53,51 +52,16 @@ void steerLeft() {
 }*/
 
 void setup() {
-    test_1.runForward();
-    test_2.runForward();
+    robot.reverseLeft(true);
+    delay(2000);
+    //robot.runForwardPID();
 }
 
 void loop() {
-    int test_1_target = test_1.getTargetState();
-    int test_2_target = test_2.getTargetState();
-
-    if (test_1.getState() == state_forward && test_1_target != state_forward) {
-        test_1.setDuration();
-        test_1.stepBack();
-    }
-
-    if (test_2.getState() == state_forward && test_2_target != state_forward) {
-        test_2.setDuration();
-        test_2.stepBack();
-    }
-
-    switch (test_1.getTargetState(1)) {
-        case state_forward:
-            test_1.runForward();
-            break;
-        case turn_right:
-            test_1.steerRight();
-            break;
-        case turn_left:
-            test_1.steerLeft();
-            break;
-        case stop:
-            test_1.stopDriving();
-            break;
-    }
-
-    switch (test_1.getTargetState(1)) {
-        case state_forward:
-            test_2.runForward();
-            break;
-        case turn_right:
-            test_2.steerRight();
-            break;
-        case turn_left:
-            test_2.steerLeft();
-            break;
-        case stop:
-            test_2.stopDriving();
-            break;
+    robot.updatePID();
+    if (robot.getPIDOutput() == 0) {
+        robot.runForwardPID();
+    } else {
+        robot.steerPID();
     }
 }

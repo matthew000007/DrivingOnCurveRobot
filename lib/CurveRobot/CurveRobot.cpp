@@ -57,11 +57,13 @@ CurveRobot::CurveRobot(const uint8_t &speed_left_pin, const uint8_t &speed_right
 
 CurveRobot::CurveRobot(const uint8_t &speed_left_pin, const uint8_t &speed_right_pin, const uint8_t &dir_left_pin,
                        const uint8_t &dir_right_pin, const float &Kp, const float &Ki, const float &Kd,
-                       uint8_t &speed) {
+                       int speed, int right_sensor_pin, int left_sensor_pin) {
     this->speed_left = speed_left_pin;
     this->speed_right = speed_right_pin;
     this->dir_left = dir_left_pin;
     this->dir_right = dir_right_pin;
+    this->right_sensor_pin = right_sensor_pin;
+    this->left_sensor_pin = left_sensor_pin;
     this->Kp = Kp;
     this->Ki = Ki;
     this->Kd = Kd;
@@ -77,6 +79,8 @@ CurveRobot::CurveRobot(const uint8_t &speed_left_pin, const uint8_t &speed_right
     pinMode(speed_right_pin, OUTPUT);
     pinMode(dir_left_pin, OUTPUT);
     pinMode(dir_right_pin, OUTPUT);
+    pinMode(right_sensor_pin, INPUT);
+    pinMode(left_sensor_pin, INPUT);
 }
 
 void CurveRobot::runForward() {
@@ -181,20 +185,51 @@ void CurveRobot::updatePID() {
 }
 
 void CurveRobot::steerPID() {
-    state = turn_left;
     int leftSpeed = speed - output;
     constrain(leftSpeed, 0, 255);
-    int rightSpeed = speed + output;
+    int rightSpeed = speed + output - 1;
     constrain(rightSpeed, 0, 255);
     analogWrite(speed_left, leftSpeed);
     analogWrite(speed_right, rightSpeed);
-    digitalWrite(dir_left, 1);
-    digitalWrite(dir_right, 1);
+    if (!reverse_right) {
+        digitalWrite(dir_right, 1);
+    } else {
+        digitalWrite(dir_right, 0);
+    }
+    if (!reverse_left) {
+        digitalWrite(dir_left, 1);
+    } else {
+        digitalWrite(dir_left, 0);
+    }
 }
 
 void CurveRobot::runForwardPID() {
-    analogWrite(speed_left, speed);
-    analogWrite(speed_right, speed);
-    digitalWrite(dir_left, 1);
-    digitalWrite(dir_right, 1);
+    int leftSpeed = speed - output;
+    constrain(leftSpeed, 0, 255);
+    int rightSpeed = speed + output - 1;
+    constrain(rightSpeed, 0, 255);
+    analogWrite(speed_left, leftSpeed);
+    analogWrite(speed_right, rightSpeed);
+    if (!reverse_right) {
+        digitalWrite(dir_right, 1);
+    } else {
+        digitalWrite(dir_right, 0);
+    }
+    if (!reverse_left) {
+        digitalWrite(dir_left, 1);
+    } else {
+        digitalWrite(dir_left, 0);
+    }
+}
+
+void CurveRobot::reverseLeft(bool x) {
+    reverse_left = x;
+}
+
+void CurveRobot::reverseRight(bool x) {
+    reverse_right = x;
+}
+
+float CurveRobot::getPIDOutput() {
+    return this->output;
 }

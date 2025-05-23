@@ -9,6 +9,7 @@
 
 class CurveRobot {
 private:
+    bool reverse_left = false, reverse_right = false;
     int state = 0;
     int targetState = state;
     int speed = 100;
@@ -21,8 +22,8 @@ private:
     int speed_right;
     int dir_left;
     int dir_right;
-    int left_sensor_pin;
-    int right_sensor_pin;
+    int left_sensor_pin = 3;
+    int right_sensor_pin = 2;
     int brake_k = 4;
     int speed_step = 2;
     int fast_time_threshold = 500;
@@ -44,10 +45,11 @@ public:
                const uint8_t &dir_right_pin);
 
     CurveRobot(const uint8_t &speed_left_pin, const uint8_t &speed_right_pin, const uint8_t &dir_left_pin,
-               const uint8_t &dir_right_pin, const float& Kp, const float& Ki, const float& Kd);
+               const uint8_t &dir_right_pin, const float &Kp, const float &Ki, const float &Kd);
 
     CurveRobot(const uint8_t &speed_left_pin, const uint8_t &speed_right_pin, const uint8_t &dir_left_pin,
-               const uint8_t &dir_right_pin, const float& Kp, const float& Ki, const float& Kd, uint8_t& speed);
+               const uint8_t &dir_right_pin, const float &Kp, const float &Ki, const float &Kd, int speed,
+               int right_sensor_pin, int left_sensor_pin);
 
     void runForward();
 
@@ -69,7 +71,13 @@ public:
 
     void steerPID();
 
+    void reverseLeft(bool x = false);
+
+    void reverseRight(bool x = false);
+
     void runForwardPID();
+
+    float getPIDOutput();
 };
 
 #endif //DRIVINGONCURVEROBOT_CURVEROBOT_H
