@@ -175,13 +175,31 @@ int CurveRobot::getState() {
 void CurveRobot::updatePID() {
     int right = !digitalRead(right_sensor_pin);
     int left = !digitalRead(left_sensor_pin);
-    error = right - left;
-    integral += error;
-    constrain(integral, -100, 100);
+
+    // Проверка потери линии (оба датчика не видят линию)
+    if (left == 0 && right == 0) {
+        // Сохраняем направление последнего поворота, если оно известно
+        if (last_error != 0) {
+            error = last_error; // Продолжаем поворачивать в последнем направлении
+        } else {
+            error = -1; // По умолчанию поворачиваем влево
+        }
+        integral = 0; // Сбрасываем интегральную сумму для предотвращения насыщения
+    } else {
+        error = right - left; // Обычная ошибка
+        integral += error; // Накапливаем интегральную сумму
+    }
+
+    // Ограничение интегральной суммы
+    integral = constrain(integral, -100, 100);
+
+    // Вычисление производной ошибки
     float derivative = error - last_error;
     last_error = error;
+
+    // Вычисление выходного значения PID
     output = Kp * error + Ki * integral + Kd * derivative;
-    constrain(output, -100, 100);
+    output = constrain(output, -100, 100); // Ограничение выходного значения
 }
 
 void CurveRobot::steerPID() {

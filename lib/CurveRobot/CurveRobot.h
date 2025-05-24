@@ -29,7 +29,7 @@ private:
     int fast_time_threshold = 500;
     int fastTime = 0;
     int error = 0;
-    int last_error = error;
+    int last_error = -1;
     int integral = 0;
     int output = 0;
     float Kp;

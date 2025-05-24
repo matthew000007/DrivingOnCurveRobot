@@ -20,7 +20,7 @@
 #define turn_left 2
 #define stop 3
 
-CurveRobot robot(5, 6, 4, 7, 235, 0.0, 0, 250, 2, 3);
+CurveRobot robot(5, 6, 4, 7, 90, 0.1, 0.2, 110, 2, 3);
 
 /*void runForward() {
     // Говорим, что едем вперед
